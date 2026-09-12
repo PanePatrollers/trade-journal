@@ -10,83 +10,105 @@
 <title>Trade Journal</title>
 <style>
 :root{
-  --accent:#007AFF;
-  --accent-soft:rgba(0,122,255,.12);
-  --bg:#F2F2F7; --card:#fff; --sub:#8E8E93; --sep:#E5E5EA; --fill:#F6F6F9;
+  --accent:#007AFF; --accent-soft:rgba(0,122,255,.12);
+  --bg:#F2F2F7; --card:#fff; --sub:#8E8E93; --sep:#E5E5EA; --fill:#F4F4F7;
   --green:#34C759; --green-ink:#1B7F3B; --green-soft:rgba(52,199,89,.16);
   --red:#FF3B30; --red-ink:#C0271D; --red-soft:rgba(255,59,48,.13);
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
+  --gutter:clamp(10px,3.2vw,16px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;background:var(--bg);overscroll-behavior-y:none;
   font-family:var(--font);color:#000;-webkit-font-smoothing:antialiased}
-button{font-family:inherit;border:none;background:none;cursor:pointer;color:inherit}
+button{font-family:inherit;border:none;background:none;cursor:pointer;color:inherit;padding:0}
 button:active{opacity:.55}
 input,textarea{font-family:inherit}
 input::placeholder,textarea::placeholder{color:#B4B4BA}
 input[type=date]{-webkit-appearance:none;appearance:none}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.wrap{max-width:430px;margin:0 auto;padding-bottom:112px}
+.wrap{max-width:460px;margin:0 auto;padding-bottom:104px}
 
-header{position:sticky;top:0;z-index:30;padding:calc(16px + env(safe-area-inset-top)) 16px 12px;
-  background:rgba(242,242,247,.86);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.hdr-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
-h1{font-size:30px;letter-spacing:-.8px;margin:0;font-weight:700}
-#acctLabel{font-size:12px;font-weight:600;color:var(--accent)}
+header{position:sticky;top:0;z-index:30;
+  padding:calc(14px + env(safe-area-inset-top)) var(--gutter) 12px;
+  background:rgba(242,242,247,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.hdr-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px}
+h1{font-size:29px;letter-spacing:-.8px;margin:0;font-weight:700}
+#acctLabel{font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap}
 
 .seg{display:flex;background:#E9E9EB;border-radius:999px;padding:4px}
 .seg button{flex:1;padding:8px 0;font-size:14px;font-weight:600;border-radius:999px;color:var(--sub);
   transition:background .18s,color .18s}
 .seg button.on{background:#fff;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,.1)}
-.seg.wl button.on.win{color:var(--green-ink)}
-.seg.wl button.on.loss{color:var(--red-ink)}
+.seg.wl button.win.on{color:var(--green-ink)}
+.seg.wl button.loss.on{color:var(--red-ink)}
 
-main{padding:0 16px;display:flex;flex-direction:column;gap:14px}
-.card{background:var(--card);border-radius:24px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.pad{padding:22px 20px}
+main{padding:0 var(--gutter);display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border-radius:22px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.pad{padding:20px var(--gutter)}
 .pad-sm{padding:18px}
-.list{padding:2px 18px}
+.list{padding:2px 16px}
 
 .eyebrow{font-size:12px;font-weight:600;color:var(--sub)}
-.big{font-size:40px;font-weight:700;letter-spacing:-1.4px;line-height:1.15}
+.big{font-size:clamp(32px,9.5vw,42px);font-weight:700;letter-spacing:-1.2px;line-height:1.15}
 .pos{color:var(--green-ink)} .neg{color:var(--red-ink)} .flat{color:var(--sub)}
 
-.stats{display:flex;margin-top:16px;padding-top:16px;border-top:1px solid var(--sep)}
-.stat{flex:1;text-align:center;min-width:0}
-.stat b{display:block;font-size:16px;font-weight:700}
-.stat span{display:block;font-size:12px;color:var(--sub);margin-top:2px}
+.stats{display:flex;margin-top:15px;padding-top:15px;border-top:1px solid var(--sep)}
+.stat{flex:1;text-align:center;min-width:0;padding:0 2px}
+.stat b{display:block;font-size:15px;font-weight:700}
+.stat span{display:block;font-size:11px;color:var(--sub);margin-top:2px;line-height:1.25}
 
-.calnav{display:flex;align-items:center;justify-content:space-between;padding:0 4px 8px}
-.calnav button{padding:8px;color:var(--accent);display:flex}
-.calnav .mlabel{font-size:16px;font-weight:700;color:#000}
-.calnav .mlabel em{font-style:normal;font-size:12px;color:var(--accent);margin-left:6px}
-.calcard{padding:14px 10px}
-.grid7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.dow{text-align:center;font-size:12px;font-weight:600;color:var(--sub);padding-bottom:4px;
-  min-width:0;overflow:hidden}
-.cell{aspect-ratio:5/6;min-height:50px;border-radius:14px;background:var(--fill);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  min-width:0;padding:2px 1px;overflow:hidden}
-.cell.empty{background:none;min-height:0}
-.cell .d{font-size:13px;font-weight:600;color:#AEAEB2;line-height:1.1}
-.cell .v{font-size:10px;font-weight:700;line-height:1.1;letter-spacing:-.2px;
-  white-space:nowrap;max-width:100%}
+/* ------------------------------- calendar ------------------------------- */
+.calcard{padding:12px clamp(5px,1.8vw,10px) clamp(8px,2vw,12px)}
+.monthnav{display:flex;align-items:center;justify-content:space-between;
+  padding:0 6px clamp(6px,1.6vw,10px)}
+.monthnav button{padding:6px 8px;color:var(--accent);display:flex;align-items:center}
+.mlabel{font-size:16px;font-weight:700;color:#000;display:flex;align-items:baseline;gap:6px}
+.mlabel em{font-style:normal;font-size:12px;color:var(--accent)}
+
+.grid7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:clamp(2px,1.1vw,5px);width:100%}
+.dow{min-width:0;text-align:center;font-size:clamp(10px,2.9vw,12px);font-weight:600;
+  color:var(--sub);padding-bottom:clamp(4px,1.2vw,7px);overflow:hidden}
+.cell{min-width:0;overflow:hidden;border-radius:clamp(10px,3vw,15px);background:var(--fill);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(0px,.4vw,2px);padding:clamp(6px,2.1vw,11px) 1px;line-height:1}
+.cell.empty{background:none}
+.cell .d{font-size:clamp(11px,3.3vw,15px);font-weight:600;color:#AEAEB2;line-height:1.05}
+.cell .v{font-size:clamp(8px,2.5vw,11px);font-weight:700;letter-spacing:-.2px;
+  line-height:1.05;white-space:nowrap;max-width:100%;overflow:hidden}
 .cell.up{background:var(--green-soft)} .cell.up .d{color:var(--green-ink)}
 .cell.down{background:var(--red-soft)} .cell.down .d{color:var(--red-ink)}
 .cell.today{box-shadow:inset 0 0 0 2px var(--accent)}
 
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;
-  border-bottom:1px solid var(--sep);width:100%;text-align:left}
+/* --------------------------------- rows --------------------------------- */
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:13px 0;border-bottom:1px solid var(--sep);width:100%;text-align:left}
 .row:last-child{border-bottom:none}
 .row .t{font-size:14px;font-weight:600}
-.row .s{font-size:12px;color:var(--sub);margin-top:1px}
+.row .s{font-size:12px;color:var(--sub);margin-top:2px}
 .row .amt{font-size:15px;font-weight:700;white-space:nowrap}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .grow{min-width:0;flex:1}
-
-.bar{flex:1;height:8px;background:var(--fill);border-radius:999px;overflow:hidden;margin:0 12px}
+.bar{flex:1;height:8px;background:var(--fill);border-radius:999px;overflow:hidden;margin:0 12px;
+  min-width:30px}
 .bar i{display:block;height:100%;border-radius:999px}
+
+/* --------------------------------- weeks -------------------------------- */
+.week{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--sep)}
+.week:last-child{border-bottom:none}
+.wnum{width:42px;height:42px;flex:none;border-radius:999px;background:var(--fill);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.wnum b{font-size:15px;font-weight:700}
+.wnum span{font-size:9px;color:var(--sub);margin-top:1px}
+.wnum.up{background:var(--green-soft);color:var(--green-ink)}
+.wnum.down{background:var(--red-soft);color:var(--red-ink)}
+.wnum.up span,.wnum.down span{color:inherit;opacity:.75}
+.wbody{flex:1;min-width:0}
+.wbody .t{font-size:14px;font-weight:600}
+.wbody .s{font-size:12px;color:var(--sub);margin-top:2px}
+.wbody .track{height:6px;background:var(--fill);border-radius:999px;margin-top:8px;overflow:hidden}
+.wbody .track i{display:block;height:100%;border-radius:999px}
 
 .label{font-size:14px;font-weight:600;margin-bottom:12px}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -109,26 +131,24 @@ textarea.field{resize:none}
 
 .primary{width:100%;padding:16px 0;border-radius:999px;font-size:16px;font-weight:700;color:#fff;
   background:var(--accent);box-shadow:0 8px 20px var(--accent-soft)}
-.primary[disabled]{background:#D6D6DB;box-shadow:none;opacity:1}
+.primary[disabled]{background:#D6D6DB;box-shadow:none}
 
-.empty{padding:34px 24px;text-align:center}
-.empty b{font-size:16px} .empty p{font-size:14px;color:var(--sub);margin:4px 0 0}
+.empty{padding:32px 24px;text-align:center}
+.empty b{font-size:16px} .empty p{font-size:14px;color:var(--sub);margin:5px 0 0;line-height:1.4}
 
 nav{position:fixed;left:0;right:0;bottom:0;z-index:40;border-top:1px solid var(--sep);
-  background:rgba(255,255,255,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(255,255,255,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   padding-bottom:env(safe-area-inset-bottom)}
-.tabs{max-width:430px;margin:0 auto;height:62px;display:flex;align-items:center;justify-content:space-around}
-.tab{width:80px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--sub);
-  font-size:12px;font-weight:600}
+.tabs{max-width:460px;margin:0 auto;height:58px;display:flex}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:var(--sub);font-size:11px;font-weight:600}
 .tab.on{color:var(--accent)}
-.fab{width:56px;height:56px;border-radius:999px;background:var(--accent);color:#fff;margin-top:-22px;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 20px var(--accent-soft),0 2px 6px rgba(0,0,0,.14)}
+.tab.action{color:var(--accent)}
 
 .scrim{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;
   background:rgba(0,0,0,.35);animation:fade .2s ease}
-.sheet{width:100%;max-width:430px;background:var(--bg);border-radius:30px 30px 0 0;
-  padding:10px 18px calc(30px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto;
+.sheet{width:100%;max-width:460px;background:var(--bg);border-radius:28px 28px 0 0;
+  padding:10px 18px calc(28px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto;
   animation:up .28s cubic-bezier(.22,1,.36,1)}
 .grab{width:38px;height:5px;border-radius:999px;background:#D1D1D6;margin:0 auto 12px}
 .sheet-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
@@ -142,23 +162,6 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:40;border-top:1px solid var(-
 #toast div{background:rgba(0,0,0,.82);color:#fff;font-size:14px;font-weight:600;
   padding:10px 16px;border-radius:999px;animation:drop .25s cubic-bezier(.22,1,.36,1)}
 
-@media (max-width:392px){
-  main{padding:0 12px}
-  header{padding-left:12px;padding-right:12px}
-  .calcard{padding:12px 7px}
-  .grid7{gap:3px}
-  .cell{min-height:46px}
-  .cell .d{font-size:12px}
-  .cell .v{font-size:9px}
-  .pad{padding:20px 18px}
-}
-@media (max-width:344px){
-  .calcard{padding:10px 5px}
-  .grid7{gap:2px}
-  .cell{border-radius:11px}
-  .cell .v{font-size:8px}
-}
-
 @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes drop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
@@ -169,7 +172,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:40;border-top:1px solid var(-
 
 <div class="wrap">
   <header>
-    <div class="hdr-top"><h1 id="title">Journal</h1><span id="acctLabel"></span></div>
+    <div class="hdr-top"><h1 id="title">Calendar</h1><span id="acctLabel"></span></div>
     <div class="seg" id="acctSeg">
       <button data-act="account" data-val="live">Live</button>
       <button data-act="account" data-val="paper">Paper</button>
@@ -178,21 +181,24 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:40;border-top:1px solid var(-
   <main id="main"></main>
 </div>
 
-<nav>
-  <div class="tabs">
-    <button class="tab" data-act="tab" data-val="journal" id="tabJournal">
-      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      Journal
-    </button>
-    <button class="fab" data-act="tab" data-val="add" aria-label="Add a trade">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg>
-    </button>
-    <button class="tab" data-act="tab" data-val="stats" id="tabStats">
-      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-      Stats
-    </button>
-  </div>
-</nav>
+<nav><div class="tabs">
+  <button class="tab" data-act="tab" data-val="calendar" id="tCalendar">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Calendar
+  </button>
+  <button class="tab" data-act="tab" data-val="weeks" id="tWeeks">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="7" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="13" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="1.6" fill="currentColor" stroke="none"/></svg>
+    Weeks
+  </button>
+  <button class="tab action" data-act="tab" data-val="add" id="tAdd">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9.5" stroke-width="2"/><path d="M12 8v8M8 12h8"/></svg>
+    Add
+  </button>
+  <button class="tab" data-act="tab" data-val="stats" id="tStats">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    Stats
+  </button>
+</div></nav>
 
 <div id="sheetHost"></div>
 <div id="toast"></div>
@@ -201,7 +207,6 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:40;border-top:1px solid var(-
 (function(){
 "use strict";
 
-/* ------------------------------- constants ------------------------------- */
 var KEY = "tradejournal:v1";
 var ACCOUNTS = {
   live:  {label:"Live",  title:"Live account",  sub:"Real money", accent:"#007AFF", soft:"rgba(0,122,255,.12)"},
@@ -210,10 +215,11 @@ var ACCOUNTS = {
 var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var MS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var TITLES = {calendar:"Calendar", weeks:"Weeks", add:"New trade", stats:"Stats"};
 
 var ICON = {
-  left:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
-  right:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  left:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  right:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
   trash:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>',
   x:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
 };
@@ -243,6 +249,7 @@ function compact(n){
   return (n > 0 ? "+" : "-") + body;
 }
 function cls(n){ return n > 0 ? "pos" : n < 0 ? "neg" : "flat"; }
+function plural(n, w){ return n + " " + w + (n === 1 ? "" : "s"); }
 
 function load(){
   try { var r = localStorage.getItem(KEY); return r ? JSON.parse(r) : []; }
@@ -258,16 +265,14 @@ var now = new Date();
 var S = {
   trades: load(),
   account: "live",
-  tab: "journal",
+  tab: "calendar",
   cursor: {y: now.getFullYear(), m: now.getMonth()},
   day: null,
   form: {win:true, value:"", date:toISO(now), symbol:"", note:""}
 };
 
 function cfg(){ return ACCOUNTS[S.account]; }
-function mine(){
-  return S.trades.filter(function(t){ return t.account === S.account; });
-}
+function mine(){ return S.trades.filter(function(t){ return t.account === S.account; }); }
 function dayMap(list){
   var m = {};
   list.forEach(function(t){
@@ -288,6 +293,10 @@ function weeksOf(y, m){
   for (i = 0; i < cells.length; i += 7) out.push(cells.slice(i, i+7));
   return out;
 }
+function monthTrades(){
+  var p = S.cursor.y + "-" + pad(S.cursor.m + 1);
+  return mine().filter(function(t){ return t.date.indexOf(p) === 0; });
+}
 
 var toastTimer = null;
 function toast(msg){
@@ -296,54 +305,54 @@ function toast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ host.innerHTML = ""; }, 1900);
 }
-
 function persist(next){
   S.trades = next;
   if (!store(next)) toast("Couldn't save to this device");
 }
 
-/* --------------------------------- views --------------------------------- */
-function journalView(){
-  var list = mine(), map = dayMap(list);
-  var prefix = S.cursor.y + "-" + pad(S.cursor.m + 1);
-  var inMonth = list.filter(function(t){ return t.date.indexOf(prefix) === 0; });
-  var pnl = inMonth.reduce(function(a,t){ return a + t.pnl; }, 0);
-  var wins = inMonth.filter(function(t){ return t.pnl > 0; }).length;
-  var decided = inMonth.filter(function(t){ return t.pnl !== 0; }).length;
-  var greens = Object.keys(map).filter(function(d){
-    return d.indexOf(prefix) === 0 && map[d].pnl > 0;
-  }).length;
-
-  var todayISO = toISO(new Date());
+/* ------------------------------ shared pieces ---------------------------- */
+function stat(label, value, klass){
+  return '<div class="stat"><b class="' + (klass || "") + '">' + value + '</b><span>' + label + '</span></div>';
+}
+function monthNav(){
   var isNow = S.cursor.y === new Date().getFullYear() && S.cursor.m === new Date().getMonth();
-  var h = "";
+  return '<div class="monthnav">' +
+    '<button data-act="month" data-val="-1" aria-label="Previous month">' + ICON.left + '</button>' +
+    '<button class="mlabel" data-act="today">' + MONTHS[S.cursor.m] + ' ' + S.cursor.y +
+      (isNow ? '' : '<em>Today</em>') + '</button>' +
+    '<button data-act="month" data-val="1" aria-label="Next month">' + ICON.right + '</button></div>';
+}
+function monthSummary(){
+  var list = monthTrades();
+  var pnl = list.reduce(function(a,t){ return a + t.pnl; }, 0);
+  var wins = list.filter(function(t){ return t.pnl > 0; }).length;
+  var decided = list.filter(function(t){ return t.pnl !== 0; }).length;
+  var map = dayMap(list);
+  var greens = Object.keys(map).filter(function(d){ return map[d].pnl > 0; }).length;
+  return '<section class="card pad">' +
+    '<div class="eyebrow">' + MONTHS[S.cursor.m] + ' &middot; ' + cfg().title + '</div>' +
+    '<div class="big ' + cls(pnl) + '">' + signed(pnl) + '</div>' +
+    '<div class="stats">' +
+      stat("Trades", list.length) +
+      stat("Win rate", (decided ? Math.round(wins/decided*100) : 0) + "%") +
+      stat("Green days", greens) +
+    '</div></section>';
+}
 
-  h += '<section class="card pad">' +
-       '<div class="eyebrow">' + MONTHS[S.cursor.m] + ' &middot; ' + cfg().title + '</div>' +
-       '<div class="big ' + cls(pnl) + '">' + signed(pnl) + '</div>' +
-       '<div class="stats">' +
-         stat("Trades", inMonth.length) +
-         stat("Win rate", (decided ? Math.round(wins/decided*100) : 0) + "%") +
-         stat("Green days", greens) +
-       '</div></section>';
+/* ------------------------------ calendar tab ----------------------------- */
+function calendarView(){
+  var map = dayMap(mine());
+  var todayISO = toISO(new Date());
+  var h = monthSummary();
 
-  var weeks = weeksOf(S.cursor.y, S.cursor.m);
-
-  h += '<section class="card calcard">' +
-       '<div class="calnav">' +
-         '<button data-act="month" data-val="-1" aria-label="Previous month">' + ICON.left + '</button>' +
-         '<button class="mlabel" data-act="today">' + MONTHS[S.cursor.m] + ' ' + S.cursor.y +
-           (isNow ? '' : '<em>Today</em>') + '</button>' +
-         '<button data-act="month" data-val="1" aria-label="Next month">' + ICON.right + '</button>' +
-       '</div><div class="grid7">';
+  h += '<section class="card calcard">' + monthNav() + '<div class="grid7">';
   DOW.forEach(function(d){ h += '<div class="dow">' + d.charAt(0) + '</div>'; });
   h += '</div><div class="grid7">';
 
-  weeks.forEach(function(w){
+  weeksOf(S.cursor.y, S.cursor.m).forEach(function(w){
     w.forEach(function(iso){
-      if (!iso) { h += '<div class="cell empty"></div>'; return; }
-      var day = map[iso];
-      var c = "cell";
+      if (!iso){ h += '<div class="cell empty"></div>'; return; }
+      var day = map[iso], c = "cell";
       if (day && day.pnl > 0) c += " up";
       else if (day && day.pnl < 0) c += " down";
       if (iso === todayISO) c += " today";
@@ -354,36 +363,62 @@ function journalView(){
     });
   });
   h += '</div></section>';
+  return h;
+}
+
+/* -------------------------------- weeks tab ------------------------------ */
+function weeksView(){
+  var map = dayMap(mine());
+  var weeks = weeksOf(S.cursor.y, S.cursor.m).map(function(w, i){
+    var days = w.filter(Boolean);
+    var pnl = 0, n = 0;
+    days.forEach(function(d){ if (map[d]){ pnl += map[d].pnl; n += map[d].n; } });
+    return {i:i+1, days:days, pnl:pnl, n:n};
+  }).filter(function(w){ return w.days.length; });
+
+  var traded = weeks.filter(function(w){ return w.n; });
+  var green = traded.filter(function(w){ return w.pnl > 0; }).length;
+  var total = weeks.reduce(function(a,w){ return a + w.pnl; }, 0);
+  var avg = traded.length ? total / traded.length : 0;
+  var peak = Math.max.apply(null, weeks.map(function(w){ return Math.abs(w.pnl); }).concat([1]));
+
+  var h = '<section class="card pad">' +
+    '<div class="eyebrow">Weekly P&amp;L &middot; ' + MONTHS[S.cursor.m] + ' ' + S.cursor.y + '</div>' +
+    '<div class="big ' + cls(total) + '">' + signed(total) + '</div>' +
+    '<div class="stats">' +
+      stat("Weeks traded", traded.length) +
+      stat("Green weeks", green + "/" + (traded.length || 0)) +
+      stat("Avg week", signed(avg), cls(avg)) +
+    '</div></section>';
+
+  h += '<section class="card calcard">' + monthNav() + '</section>';
 
   h += '<section class="card list">';
-  weeks.forEach(function(w, i){
-    var days = w.filter(Boolean);
-    if (!days.length) return;
-    var wp = 0, wn = 0;
-    days.forEach(function(d){ if (map[d]) { wp += map[d].pnl; wn += map[d].n; } });
-    var a = fromISO(days[0]), b = fromISO(days[days.length-1]);
-    h += '<div class="row"><div class="grow">' +
-         '<div class="t">Week ' + (i+1) + '</div>' +
-         '<div class="s">' + MS[a.getMonth()] + ' ' + a.getDate() + ' &ndash; ' +
-           MS[b.getMonth()] + ' ' + b.getDate() + ' &middot; ' + wn + (wn === 1 ? ' trade' : ' trades') +
-         '</div></div>' +
-         '<div class="amt ' + cls(wp) + '">' + signed(wp) + '</div></div>';
+  weeks.forEach(function(w){
+    var a = fromISO(w.days[0]), b = fromISO(w.days[w.days.length-1]);
+    var k = w.pnl > 0 ? " up" : w.pnl < 0 ? " down" : "";
+    h += '<div class="week">' +
+      '<div class="wnum' + k + '"><b>' + w.i + '</b><span>WK</span></div>' +
+      '<div class="wbody">' +
+        '<div class="t">' + MS[a.getMonth()] + ' ' + a.getDate() + ' &ndash; ' +
+          MS[b.getMonth()] + ' ' + b.getDate() + '</div>' +
+        '<div class="s">' + (w.n ? plural(w.n, "trade") : "No trades") + '</div>' +
+        '<div class="track"><i style="width:' + (Math.abs(w.pnl)/peak*100) + '%;background:' +
+          (w.pnl >= 0 ? 'var(--green)' : 'var(--red)') + '"></i></div>' +
+      '</div>' +
+      '<div class="amt ' + cls(w.pnl) + '">' + signed(w.pnl) + '</div>' +
+    '</div>';
   });
   h += '</section>';
   return h;
 }
 
-function stat(label, value, klass){
-  return '<div class="stat"><b class="' + (klass || "") + '">' + value + '</b><span>' + label + '</span></div>';
-}
-
+/* --------------------------------- add tab ------------------------------- */
 function addView(){
   var f = S.form;
   var num = parseFloat(f.value);
   var ok = !isNaN(num) && num > 0;
-  var h = "";
-
-  h += '<section class="card pad-sm"><div class="label">Which account?</div><div class="choices">';
+  var h = '<section class="card pad-sm"><div class="label">Which account?</div><div class="choices">';
   ["live","paper"].forEach(function(k){
     var a = ACCOUNTS[k], on = S.account === k;
     h += '<button class="choice' + (on ? ' on' : '') + '" data-act="account" data-val="' + k + '"' +
@@ -393,42 +428,40 @@ function addView(){
   h += '</div></section>';
 
   h += '<section class="card pad-sm"><div class="label">Realized P&amp;L</div>' +
-       '<div class="seg wl" style="margin-bottom:12px">' +
-         '<button class="win' + (f.win ? ' on' : '') + '" data-act="win" data-val="1">Win</button>' +
-         '<button class="loss' + (f.win ? '' : ' on') + '" data-act="win" data-val="0">Loss</button>' +
-       '</div>' +
-       '<div class="amountbox' + (f.win ? '' : ' loss') + '">' +
-         '<span class="sign">' + (f.win ? '+$' : '-$') + '</span>' +
-         '<input id="fAmount" data-field="value" inputmode="decimal" placeholder="0" value="' + esc(f.value) + '">' +
-       '</div></section>';
+    '<div class="seg wl" style="margin-bottom:12px">' +
+      '<button class="win' + (f.win ? ' on' : '') + '" data-act="win" data-val="1">Win</button>' +
+      '<button class="loss' + (f.win ? '' : ' on') + '" data-act="win" data-val="0">Loss</button>' +
+    '</div>' +
+    '<div class="amountbox' + (f.win ? '' : ' loss') + '">' +
+      '<span class="sign">' + (f.win ? '+$' : '-$') + '</span>' +
+      '<input id="fAmount" data-field="value" inputmode="decimal" placeholder="0" value="' + esc(f.value) + '">' +
+    '</div></section>';
 
   h += '<section class="card pad-sm"><div class="label">Details</div><div class="fields">' +
-       '<input class="field" id="fDate" data-field="date" type="date" value="' + esc(f.date) + '">' +
-       '<input class="field" id="fSymbol" data-field="symbol" placeholder="Symbol (optional)" value="' + esc(f.symbol) + '">' +
-       '<textarea class="field" id="fNote" data-field="note" rows="3" placeholder="Notes (optional)">' + esc(f.note) + '</textarea>' +
-       '</div></section>';
+    '<input class="field" id="fDate" data-field="date" type="date" value="' + esc(f.date) + '">' +
+    '<input class="field" id="fSymbol" data-field="symbol" placeholder="Symbol (optional)" value="' + esc(f.symbol) + '">' +
+    '<textarea class="field" id="fNote" data-field="note" rows="3" placeholder="Notes (optional)">' + esc(f.note) + '</textarea>' +
+    '</div></section>';
 
   h += '<button class="primary" data-act="save"' + (ok ? '' : ' disabled') + '>Save to ' +
-       cfg().label.toLowerCase() + ' journal</button>';
+    cfg().label.toLowerCase() + ' journal</button>';
   return h;
 }
 
+/* -------------------------------- stats tab ------------------------------ */
 function statsView(){
   var list = mine();
   if (!list.length){
-    return '<section class="card empty"><b>Nothing here yet</b>' +
-           '<p>Log a trade on the ' + cfg().label.toLowerCase() +
-           ' side and your numbers show up here.</p></section>';
+    return '<section class="card empty"><b>Nothing here yet</b><p>Log a trade on the ' +
+      cfg().label.toLowerCase() + ' side and your numbers show up here.</p></section>';
   }
-
   var net = list.reduce(function(a,t){ return a + t.pnl; }, 0);
   var wins = list.filter(function(t){ return t.pnl > 0; });
   var losses = list.filter(function(t){ return t.pnl < 0; });
   var decided = wins.length + losses.length;
   var grossW = wins.reduce(function(a,t){ return a + t.pnl; }, 0);
   var grossL = Math.abs(losses.reduce(function(a,t){ return a + t.pnl; }, 0));
-  var map = dayMap(list);
-  var days = Object.keys(map);
+  var map = dayMap(list), days = Object.keys(map);
   var best = days.reduce(function(a,b){ return map[b].pnl > map[a].pnl ? b : a; }, days[0]);
   var worst = days.reduce(function(a,b){ return map[b].pnl < map[a].pnl ? b : a; }, days[0]);
 
@@ -439,12 +472,10 @@ function statsView(){
       stat("Trades", list.length) +
       stat("Win rate", (decided ? Math.round(wins.length/decided*100) : 0) + "%") +
       stat("Profit factor", grossL ? (grossW/grossL).toFixed(2) : "&mdash;") +
-    '</div>' +
-    '<div class="stats">' +
+    '</div><div class="stats">' +
       stat("Avg win", signed(wins.length ? grossW/wins.length : 0), "pos") +
       stat("Avg loss", signed(losses.length ? -grossL/losses.length : 0), "neg") +
-    '</div>' +
-    '<div class="stats">' +
+    '</div><div class="stats">' +
       stat("Best day &middot; " + MS[fromISO(best).getMonth()] + " " + fromISO(best).getDate(),
            signed(map[best].pnl), "pos") +
       stat("Worst day &middot; " + MS[fromISO(worst).getMonth()] + " " + fromISO(worst).getDate(),
@@ -465,12 +496,11 @@ function statsView(){
   keys.forEach(function(k){
     var v = months[k], p = k.split("-");
     h += '<button class="row" data-act="jump" data-val="' + k + '">' +
-         '<div style="width:92px"><div class="t">' + MS[+p[1]-1] + ' ' + p[0] + '</div>' +
-         '<div class="s">' + v.n + (v.n === 1 ? ' trade' : ' trades') + '</div></div>' +
-         '<div class="bar"><i style="width:' + (Math.abs(v.pnl)/peak*100) + '%;background:' +
-           (v.pnl >= 0 ? 'var(--green)' : 'var(--red)') + '"></i></div>' +
-         '<div class="amt ' + cls(v.pnl) + '" style="min-width:72px;text-align:right">' + signed(v.pnl) + '</div>' +
-         '</button>';
+      '<div style="width:88px;flex:none"><div class="t">' + MS[+p[1]-1] + ' ' + p[0] + '</div>' +
+      '<div class="s">' + plural(v.n, "trade") + '</div></div>' +
+      '<div class="bar"><i style="width:' + (Math.abs(v.pnl)/peak*100) + '%;background:' +
+        (v.pnl >= 0 ? 'var(--green)' : 'var(--red)') + '"></i></div>' +
+      '<div class="amt ' + cls(v.pnl) + '">' + signed(v.pnl) + '</div></button>';
   });
   h += '</section>';
 
@@ -482,17 +512,18 @@ function statsView(){
   recent.forEach(function(t){
     var d = fromISO(t.date);
     h += '<div class="row"><div class="grow">' +
-         '<div class="t truncate">' + esc(t.symbol || "Trade") + ' &middot; ' + MS[d.getMonth()] + ' ' + d.getDate() + '</div>' +
-         (t.note ? '<div class="s truncate">' + esc(t.note) + '</div>' : '') +
-         '</div><div style="display:flex;align-items:center;gap:12px">' +
-         '<span class="amt ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span>' +
-         '<button data-act="del" data-val="' + t.id + '" style="color:var(--sub);display:flex" aria-label="Delete trade">' + ICON.trash + '</button>' +
-         '</div></div>';
+      '<div class="t truncate">' + esc(t.symbol || "Trade") + ' &middot; ' + MS[d.getMonth()] + ' ' + d.getDate() + '</div>' +
+      (t.note ? '<div class="s truncate">' + esc(t.note) + '</div>' : '') +
+      '</div><div style="display:flex;align-items:center;gap:12px">' +
+      '<span class="amt ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span>' +
+      '<button data-act="del" data-val="' + t.id + '" style="color:var(--sub);display:flex" aria-label="Delete trade">' + ICON.trash + '</button>' +
+      '</div></div>';
   });
   h += '</section>';
   return h;
 }
 
+/* -------------------------------- day sheet ------------------------------ */
 function sheetHTML(){
   if (!S.day) return "";
   var d = fromISO(S.day);
@@ -511,12 +542,12 @@ function sheetHTML(){
     h += '<section class="card list">';
     list.forEach(function(t){
       h += '<div class="row"><div class="grow">' +
-           '<div class="t truncate">' + esc(t.symbol || "Trade") + '</div>' +
-           (t.note ? '<div class="s truncate">' + esc(t.note) + '</div>' : '') +
-           '</div><div style="display:flex;align-items:center;gap:12px">' +
-           '<span class="amt ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span>' +
-           '<button data-act="del" data-val="' + t.id + '" style="color:var(--sub);display:flex" aria-label="Delete trade">' + ICON.trash + '</button>' +
-           '</div></div>';
+        '<div class="t truncate">' + esc(t.symbol || "Trade") + '</div>' +
+        (t.note ? '<div class="s truncate">' + esc(t.note) + '</div>' : '') +
+        '</div><div style="display:flex;align-items:center;gap:12px">' +
+        '<span class="amt ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span>' +
+        '<button data-act="del" data-val="' + t.id + '" style="color:var(--sub);display:flex" aria-label="Delete trade">' + ICON.trash + '</button>' +
+        '</div></div>';
     });
     h += '</section>';
   }
@@ -525,28 +556,33 @@ function sheetHTML(){
 }
 
 /* -------------------------------- rendering ------------------------------ */
+var TABS = ["calendar","weeks","add","stats"];
+var TABEL = {calendar:"tCalendar", weeks:"tWeeks", add:"tAdd", stats:"tStats"};
+
 function render(){
   var active = document.activeElement;
   var keepId = active && active.id && active.tagName !== "BUTTON" ? active.id : null;
   var caret = null;
-  if (keepId) { try { caret = active.selectionStart; } catch(e){} }
+  if (keepId){ try { caret = active.selectionStart; } catch(e){} }
 
   var c = cfg();
   document.documentElement.style.setProperty("--accent", c.accent);
   document.documentElement.style.setProperty("--accent-soft", c.soft);
-  document.getElementById("title").textContent =
-    S.tab === "add" ? "New trade" : S.tab === "stats" ? "Stats" : "Journal";
+  document.getElementById("title").textContent = TITLES[S.tab];
   document.getElementById("acctLabel").textContent = c.title;
 
-  var segs = document.querySelectorAll('#acctSeg button');
+  var segs = document.querySelectorAll("#acctSeg button");
   for (var i = 0; i < segs.length; i++){
     segs[i].classList.toggle("on", segs[i].getAttribute("data-val") === S.account);
   }
-  document.getElementById("tabJournal").classList.toggle("on", S.tab === "journal");
-  document.getElementById("tabStats").classList.toggle("on", S.tab === "stats");
+  TABS.forEach(function(t){
+    document.getElementById(TABEL[t]).classList.toggle("on", S.tab === t);
+  });
 
   document.getElementById("main").innerHTML =
-    S.tab === "add" ? addView() : S.tab === "stats" ? statsView() : journalView();
+    S.tab === "weeks" ? weeksView() :
+    S.tab === "add"   ? addView()   :
+    S.tab === "stats" ? statsView() : calendarView();
   document.getElementById("sheetHost").innerHTML = sheetHTML();
 
   if (keepId){
@@ -562,8 +598,7 @@ function render(){
 
 /* --------------------------------- events -------------------------------- */
 function saveTrade(){
-  var f = S.form;
-  var num = parseFloat(f.value);
+  var f = S.form, num = parseFloat(f.value);
   if (isNaN(num) || num <= 0) return;
   var t = {
     id: Date.now() + "-" + Math.random().toString(36).slice(2,7),
@@ -577,7 +612,7 @@ function saveTrade(){
   var d = fromISO(t.date);
   S.cursor = {y:d.getFullYear(), m:d.getMonth()};
   S.form = {win:true, value:"", date:f.date, symbol:"", note:""};
-  S.tab = "journal";
+  S.tab = "calendar";
   render();
   toast(signed(t.pnl) + " logged to " + ACCOUNTS[t.account].label.toLowerCase());
 }
@@ -586,9 +621,7 @@ document.addEventListener("click", function(e){
   var stop = e.target.closest("[data-stop]");
   var el = e.target.closest("[data-act]");
   if (!el) return;
-  var act = el.getAttribute("data-act");
-  var val = el.getAttribute("data-val");
-
+  var act = el.getAttribute("data-act"), val = el.getAttribute("data-val");
   if (act === "close" && stop && el.classList.contains("scrim")) return;
 
   switch(act){
@@ -609,11 +642,9 @@ document.addEventListener("click", function(e){
     case "jump":
       var p = val.split("-");
       S.cursor = {y:+p[0], m:+p[1]-1};
-      S.tab = "journal";
+      S.tab = "calendar";
       break;
-    case "del":
-      persist(S.trades.filter(function(t){ return t.id !== val; }));
-      break;
+    case "del": persist(S.trades.filter(function(t){ return t.id !== val; })); break;
     case "save": saveTrade(); return;
   }
   render();
