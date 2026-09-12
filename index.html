@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Journal">
+<meta name="theme-color" content="#F2F2F7">
+<title>Trade Journal</title>
+<style>
+:root{
+  --accent:#007AFF;
+  --accent-soft:rgba(0,122,255,.12);
+  --bg:#F2F2F7; --card:#fff; --sub:#8E8E93; --sep:#E5E5EA; --fill:#F6F6F9;
+  --green:#34C759; --green-ink:#1B7F3B; --green-soft:rgba(52,199,89,.16);
+  --red:#FF3B30; --red-ink:#C0271D; --red-soft:rgba(255,59,48,.13);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);overscroll-behavior-y:none;
+  font-family:var(--font);color:#000;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;border:none;background:none;cursor:pointer;color:inherit}
+button:active{opacity:.55}
+input,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#B4B4BA}
+input[type=date]{-webkit-appearance:none;appearance:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.wrap{max-width:430px;margin:0 auto;padding-bottom:112px}
+
+header{position:sticky;top:0;z-index:30;padding:calc(16px + env(safe-area-inset-top)) 16px 12px;
+  background:rgba(242,242,247,.86);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.hdr-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+h1{font-size:30px;letter-spacing:-.8px;margin:0;font-weight:700}
+#acctLabel{font-size:12px;font-weight:600;color:var(--accent)}
+
+.seg{display:flex;background:#E9E9EB;border-radius:999px;padding:4px}
+.seg button{flex:1;padding:8px 0;font-size:14px;font-weight:600;border-radius:999px;color:var(--sub);
+  transition:background .18s,color .18s}
+.seg button.on{background:#fff;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.seg.wl button.on.win{color:var(--green-ink)}
+.seg.wl button.on.loss{color:var(--red-ink)}
+
+main{padding:0 16px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border-radius:24px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.pad{padding:22px 20px}
+.pad-sm{padding:18px}
+.list{padding:2px 18px}
+
+.eyebrow{font-size:12px;font-weight:600;color:var(--sub)}
+.big{font-size:40px;font-weight:700;letter-spacing:-1.4px;line-height:1.15}
+.pos{color:var(--green-ink)} .neg{color:var(--red-ink)} .flat{color:var(--sub)}
+
+.stats{display:flex;margin-top:16px;padding-top:16px;border-top:1px solid var(--sep)}
+.stat{flex:1;text-align:center;min-width:0}
+.stat b{display:block;font-size:16px;font-weight:700}
+.stat span{display:block;font-size:12px;color:var(--sub);margin-top:2px}
+
+.calnav{display:flex;align-items:center;justify-content:space-between;padding:0 4px 8px}
+.calnav button{padding:8px;color:var(--accent);display:flex}
+.calnav .mlabel{font-size:16px;font-weight:700;color:#000}
+.calnav .mlabel em{font-style:normal;font-size:12px;color:var(--accent);margin-left:6px}
+.grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dow{text-align:center;font-size:12px;font-weight:600;color:var(--sub);padding-bottom:4px}
+.cell{aspect-ratio:1/1;border-radius:14px;background:var(--fill);border:2px solid transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cell.empty{background:none}
+.cell .d{font-size:12px;font-weight:600;color:#AEAEB2}
+.cell .v{font-size:10px;font-weight:700;margin-top:1px}
+.cell.up{background:var(--green-soft)} .cell.up .d{color:var(--green-ink)}
+.cell.down{background:var(--red-soft)} .cell.down .d{color:var(--red-ink)}
+.cell.today{border-color:var(--accent)}
+
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;
+  border-bottom:1px solid var(--sep);width:100%;text-align:left}
+.row:last-child{border-bottom:none}
+.row .t{font-size:14px;font-weight:600}
+.row .s{font-size:12px;color:var(--sub);margin-top:1px}
+.row .amt{font-size:15px;font-weight:700;white-space:nowrap}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grow{min-width:0;flex:1}
+
+.bar{flex:1;height:8px;background:var(--fill);border-radius:999px;overflow:hidden;margin:0 12px}
+.bar i{display:block;height:100%;border-radius:999px}
+
+.label{font-size:14px;font-weight:600;margin-bottom:12px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choice{padding:16px 0;border-radius:20px;background:var(--fill);text-align:center}
+.choice b{display:block;font-size:16px;font-weight:700}
+.choice span{display:block;font-size:12px;color:var(--sub)}
+.choice.on{color:#fff}
+.choice.on span{color:rgba(255,255,255,.85)}
+
+.amountbox{display:flex;align-items:center;border-radius:20px;padding:14px 18px;background:var(--green-soft)}
+.amountbox.loss{background:var(--red-soft)}
+.amountbox .sign,.amountbox input{font-size:30px;font-weight:700;letter-spacing:-.8px;color:var(--green-ink)}
+.amountbox.loss .sign,.amountbox.loss input{color:var(--red-ink)}
+.amountbox input{flex:1;min-width:0;background:none;border:none;outline:none;width:100%}
+
+.field{width:100%;background:var(--fill);border-radius:16px;border:none;outline:none;
+  padding:14px 16px;font-size:16px}
+textarea.field{resize:none}
+.fields{display:flex;flex-direction:column;gap:10px}
+
+.primary{width:100%;padding:16px 0;border-radius:999px;font-size:16px;font-weight:700;color:#fff;
+  background:var(--accent);box-shadow:0 8px 20px var(--accent-soft)}
+.primary[disabled]{background:#D6D6DB;box-shadow:none;opacity:1}
+
+.empty{padding:34px 24px;text-align:center}
+.empty b{font-size:16px} .empty p{font-size:14px;color:var(--sub);margin:4px 0 0}
+
+nav{position:fixed;left:0;right:0;bottom:0;z-index:40;border-top:1px solid var(--sep);
+  background:rgba(255,255,255,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  padding-bottom:env(safe-area-inset-bottom)}
+.tabs{max-width:430px;margin:0 auto;height:62px;display:flex;align-items:center;justify-content:space-around}
+.tab{width:80px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--sub);
+  font-size:12px;font-weight:600}
+.tab.on{color:var(--accent)}
+.fab{width:56px;height:56px;border-radius:999px;background:var(--accent);color:#fff;margin-top:-22px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px var(--accent-soft),0 2px 6px rgba(0,0,0,.14)}
+
+.scrim{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,.35);animation:fade .2s ease}
+.sheet{width:100%;max-width:430px;background:var(--bg);border-radius:30px 30px 0 0;
+  padding:10px 18px calc(30px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto;
+  animation:up .28s cubic-bezier(.22,1,.36,1)}
+.grab{width:38px;height:5px;border-radius:999px;background:#D1D1D6;margin:0 auto 12px}
+.sheet-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.sheet-hd .day{font-size:18px;font-weight:700}
+.sheet-hd .tot{font-size:24px;font-weight:700;letter-spacing:-.6px}
+.xbtn{padding:6px;background:#E3E3E8;border-radius:999px;color:var(--sub);display:flex}
+.sheet .primary{padding:14px 0;font-size:14px;margin-top:12px;box-shadow:none}
+
+#toast{position:fixed;top:calc(14px + env(safe-area-inset-top));left:0;right:0;z-index:60;
+  display:flex;justify-content:center;pointer-events:none}
+#toast div{background:rgba(0,0,0,.82);color:#fff;font-size:14px;font-weight:600;
+  padding:10px 16px;border-radius:999px;animation:drop .25s cubic-bezier(.22,1,.36,1)}
+
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes drop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="hdr-top"><h1 id="title">Journal</h1><span id="acctLabel"></span></div>
+    <div class="seg" id="acctSeg">
+      <button data-act="account" data-val="live">Live</button>
+      <button data-act="account" data-val="paper">Paper</button>
+    </div>
+  </header>
+  <main id="main"></main>
+</div>
+
+<nav>
+  <div class="tabs">
+    <button class="tab" data-act="tab" data-val="journal" id="tabJournal">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Journal
+    </button>
+    <button class="fab" data-act="tab" data-val="add" aria-label="Add a trade">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg>
+    </button>
+    <button class="tab" data-act="tab" data-val="stats" id="tabStats">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      Stats
+    </button>
+  </div>
+</nav>
+
+<div id="sheetHost"></div>
+<div id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ------------------------------- constants ------------------------------- */
+var KEY = "tradejournal:v1";
+var ACCOUNTS = {
+  live:  {label:"Live",  title:"Live account",  sub:"Real money", accent:"#007AFF", soft:"rgba(0,122,255,.12)"},
+  paper: {label:"Paper", title:"Paper trading", sub:"Practice",   accent:"#AF52DE", soft:"rgba(175,82,222,.12)"}
+};
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var MS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+var ICON = {
+  left:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  right:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  trash:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>',
+  x:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+};
+
+/* -------------------------------- helpers -------------------------------- */
+function pad(n){ return n < 10 ? "0" + n : "" + n; }
+function toISO(d){ return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+function fromISO(s){ var p = s.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function amt(n){
+  var a = Math.abs(n);
+  return a.toLocaleString("en-US", {
+    minimumFractionDigits: a % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2
+  });
+}
+function signed(n){ return (n > 0 ? "+" : n < 0 ? "-" : "") + "$" + amt(n); }
+function compact(n){
+  if (!n) return "0";
+  var a = Math.abs(n), body;
+  if (a >= 1000) body = (a/1000).toFixed(a >= 10000 ? 0 : 1).replace(/\.0$/,"") + "k";
+  else body = Math.round(a);
+  return (n > 0 ? "+" : "-") + body;
+}
+function cls(n){ return n > 0 ? "pos" : n < 0 ? "neg" : "flat"; }
+
+function load(){
+  try { var r = localStorage.getItem(KEY); return r ? JSON.parse(r) : []; }
+  catch(e){ return []; }
+}
+function store(list){
+  try { localStorage.setItem(KEY, JSON.stringify(list)); return true; }
+  catch(e){ return false; }
+}
+
+/* --------------------------------- state --------------------------------- */
+var now = new Date();
+var S = {
+  trades: load(),
+  account: "live",
+  tab: "journal",
+  cursor: {y: now.getFullYear(), m: now.getMonth()},
+  day: null,
+  form: {win:true, value:"", date:toISO(now), symbol:"", note:""}
+};
+
+function cfg(){ return ACCOUNTS[S.account]; }
+function mine(){
+  return S.trades.filter(function(t){ return t.account === S.account; });
+}
+function dayMap(list){
+  var m = {};
+  list.forEach(function(t){
+    if (!m[t.date]) m[t.date] = {pnl:0, n:0};
+    m[t.date].pnl += t.pnl;
+    m[t.date].n += 1;
+  });
+  return m;
+}
+function weeksOf(y, m){
+  var lead = new Date(y, m, 1).getDay();
+  var total = new Date(y, m+1, 0).getDate();
+  var cells = [], i, d;
+  for (i = 0; i < lead; i++) cells.push(null);
+  for (d = 1; d <= total; d++) cells.push(toISO(new Date(y, m, d)));
+  while (cells.length % 7) cells.push(null);
+  var out = [];
+  for (i = 0; i < cells.length; i += 7) out.push(cells.slice(i, i+7));
+  return out;
+}
+
+var toastTimer = null;
+function toast(msg){
+  var host = document.getElementById("toast");
+  host.innerHTML = "<div>" + esc(msg) + "</div>";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ host.innerHTML = ""; }, 1900);
+}
+
+function persist(next){
+  S.trades = next;
+  if (!store(next)) toast("Couldn't save to this device");
+}
+
+/* --------------------------------- views --------------------------------- */
+function journalView(){
+  var list = mine(), map = dayMap(list);
+  var prefix = S.cursor.y + "-" + pad(S.cursor.m + 1);
+  var inMonth = list.filter(function(t){ return t.date.indexOf(prefix) === 0; });
+  var pnl = inMonth.reduce(function(a,t){ return a + t.pnl; }, 0);
+  var wins = inMonth.filter(function(t){ return t.pnl > 0; }).length;
+  var decided = inMonth.filter(function(t){ return t.pnl !== 0; }).length;
+  var greens = Object.keys(map).filter(function(d){
+    return d.indexOf(prefix) === 0 && map[d].pnl > 0;
+  }).length;
+
+  var todayISO = toISO(new Date());
+  var isNow = S.cursor.y === new Date().getFullYear() && S.cursor.m === new Date().getMonth();
+  var h = "";
+
+  h += '<section class="card pad">' +
+       '<div class="eyebrow">' + MONTHS[S.cursor.m] + ' &middot; ' + cfg().title + '</div>' +
+       '<div class="big ' + cls(pnl) + '">' + signed(pnl) + '</div>' +
+       '<div class="stats">' +
+         stat("Trades", inMonth.length) +
+         stat("Win rate", (decided ? Math.round(wins/decided*100) : 0) + "%") +
+         stat("Green days", greens) +
+       '</div></section>';
+
+  var weeks = weeksOf(S.cursor.y, S.cursor.m);
+
+  h += '<section class="card" style="padding:14px">' +
+       '<div class="calnav">' +
+         '<button data-act="month" data-val="-1" aria-label="Previous month">' + ICON.left + '</button>' +
+         '<button class="mlabel" data-act="today">' + MONTHS[S.cursor.m] + ' ' + S.cursor.y +
+           (isNow ? '' : '<em>Today</em>') + '</button>' +
+         '<button data-act="month" data-val="1" aria-label="Next month">' + ICON.right + '</button>' +
+       '</div><div class="grid7">';
+  DOW.forEach(function(d){ h += '<div class="dow">' + d.charAt(0) + '</div>'; });
+  h += '</div><div class="grid7">';
+
+  weeks.forEach(function(w){
+    w.forEach(function(iso){
+      if (!iso) { h += '<div class="cell empty"></div>'; return; }
+      var day = map[iso];
+      var c = "cell";
+      if (day && day.pnl > 0) c += " up";
+      else if (day && day.pnl < 0) c += " down";
+      if (iso === todayISO) c += " today";
+      h += '<button class="' + c + '" data-act="day" data-val="' + iso + '">' +
+           '<span class="d">' + (+iso.slice(8)) + '</span>' +
+           (day ? '<span class="v ' + cls(day.pnl) + '">' + compact(day.pnl) + '</span>' : '') +
+           '</button>';
+    });
+  });
+  h += '</div></section>';
+
+  h += '<section class="card list">';
+  weeks.forEach(function(w, i){
+    var days = w.filter(Boolean);
+    if (!days.length) return;
+    var wp = 0, wn = 0;
+    days.forEach(function(d){ if (map[d]) { wp += map[d].pnl; wn += map[d].n; } });
+    var a = fromISO(days[0]), b = fromISO(days[days.length-1]);
+    h += '<div class="row"><div class="grow">' +
+         '<div class="t">Week ' + (i+1) + '</div>' +
+         '<div class="s">' + MS[a.getMonth()] + ' ' + a.getDate() + ' &ndash; ' +
+           MS[b.getMonth()] + ' ' + b.getDate() + ' &middot; ' + wn + (wn === 1 ? ' trade' : ' trades') +
+         '</div></div>' +
+         '<div class="amt ' + cls(wp) + '">' + signed(wp) + '</div></div>';
+  });
+  h += '</section>';
+  return h;
+}
+
+function stat(label, value, klass){
+  return '<div class="stat"><b class="' + (klass || "") + '">' + value + '</b><span>' + label + '</span></div>';
+}
+
+function addView(){
+  var f = S.form;
+  var num = parseFloat(f.value);
+  var ok = !isNaN(num) && num > 0;
+  var h = "";
+
+  h += '<section class="card pad-sm"><div class="label">Which account?</div><div class="choices">';
+  ["live","paper"].forEach(function(k){
+    var a = ACCOUNTS[k], on = S.account === k;
+    h += '<button class="choice' + (on ? ' on' : '') + '" data-act="account" data-val="' + k + '"' +
+         (on ? ' style="background:' + a.accent + ';box-shadow:0 6px 16px ' + a.soft + '"' : '') + '>' +
+         '<b>' + a.label + '</b><span>' + a.sub + '</span></button>';
+  });
+  h += '</div></section>';
+
+  h += '<section class="card pad-sm"><div class="label">Realized P&amp;L</div>' +
+       '<div class="seg wl" style="margin-bottom:12px">' +
+         '<button class="win' + (f.win ? ' on' : '') + '" data-act="win" data-val="1">Win</button>' +
+         '<button class="loss' + (f.win ? '' : ' on') + '" data-act="win" data-val="0">Loss</button>' +
+       '</div>' +
+       '<div class="amountbox' + (f.win ? '' : ' loss') + '">' +
+         '<span class="sign">' + (f.win ? '+$' : '-$') + '</span>' +
+         '<input id="fAmount" data-field="value" inputmode="decimal" placeholder="0" value="' + esc(f.value) + '">' +
+       '</div></section>';
+
+  h += '<section class="card pad-sm"><div class="label">Details</div><div class="fields">' +
+       '<input class="field" id="fDate" data-field="date" type="date" value="' + esc(f.date) + '">' +
+       '<input class="field" id="fSymbol" data-field="symbol" placeholder="Symbol (optional)" value="' + esc(f.symbol) + '">' +
+       '<textarea class="field" id="fNote" data-field="note" rows="3" placeholder="Notes (optional)">' + esc(f.note) + '</textarea>' +
+       '</div></section>';
+
+  h += '<button class="primary" data-act="save"' + (ok ? '' : ' disabled') + '>Save to ' +
+       cfg().label.toLowerCase() + ' journal</button>';
+  return h;
+}
+
+function statsView(){
+  var list = mine();
+  if (!list.length){
+    return '<section class="card empty"><b>Nothing here yet</b>' +
+           '<p>Log a trade on the ' + cfg().label.toLowerCase() +
+           ' side and your numbers show up here.</p></section>';
+  }
+
+  var net = list.reduce(function(a,t){ return a + t.pnl; }, 0);
+  var wins = list.filter(function(t){ return t.pnl > 0; });
+  var losses = list.filter(function(t){ return t.pnl < 0; });
+  var decided = wins.length + losses.length;
+  var grossW = wins.reduce(function(a,t){ return a + t.pnl; }, 0);
+  var grossL = Math.abs(losses.reduce(function(a,t){ return a + t.pnl; }, 0));
+  var map = dayMap(list);
+  var days = Object.keys(map);
+  var best = days.reduce(function(a,b){ return map[b].pnl > map[a].pnl ? b : a; }, days[0]);
+  var worst = days.reduce(function(a,b){ return map[b].pnl < map[a].pnl ? b : a; }, days[0]);
+
+  var h = '<section class="card pad">' +
+    '<div class="eyebrow">All time &middot; ' + cfg().title + '</div>' +
+    '<div class="big ' + cls(net) + '">' + signed(net) + '</div>' +
+    '<div class="stats">' +
+      stat("Trades", list.length) +
+      stat("Win rate", (decided ? Math.round(wins.length/decided*100) : 0) + "%") +
+      stat("Profit factor", grossL ? (grossW/grossL).toFixed(2) : "&mdash;") +
+    '</div>' +
+    '<div class="stats">' +
+      stat("Avg win", signed(wins.length ? grossW/wins.length : 0), "pos") +
+      stat("Avg loss", signed(losses.length ? -grossL/losses.length : 0), "neg") +
+    '</div>' +
+    '<div class="stats">' +
+      stat("Best day &middot; " + MS[fromISO(best).getMonth()] + " " + fromISO(best).getDate(),
+           signed(map[best].pnl), "pos") +
+      stat("Worst day &middot; " + MS[fromISO(worst).getMonth()] + " " + fromISO(worst).getDate(),
+           signed(map[worst].pnl), "neg") +
+    '</div></section>';
+
+  var months = {};
+  list.forEach(function(t){
+    var k = t.date.slice(0,7);
+    if (!months[k]) months[k] = {pnl:0, n:0};
+    months[k].pnl += t.pnl;
+    months[k].n += 1;
+  });
+  var keys = Object.keys(months).sort().reverse();
+  var peak = Math.max.apply(null, keys.map(function(k){ return Math.abs(months[k].pnl); }).concat([1]));
+
+  h += '<section class="card list">';
+  keys.forEach(function(k){
+    var v = months[k], p = k.split("-");
+    h += '<button class="row" data-act="jump" data-val="' + k + '">' +
+         '<div style="width:92px"><div class="t">' + MS[+p[1]-1] + ' ' + p[0] + '</div>' +
+         '<div class="s">' + v.n + (v.n === 1 ? ' trade' : ' trades') + '</div></div>' +
+         '<div class="bar"><i style="width:' + (Math.abs(v.pnl)/peak*100) + '%;background:' +
+           (v.pnl >= 0 ? 'var(--green)' : 'var(--red)') + '"></i></div>' +
+         '<div class="amt ' + cls(v.pnl) + '" style="min-width:72px;text-align:right">' + signed(v.pnl) + '</div>' +
+         '</button>';
+  });
+  h += '</section>';
+
+  var recent = list.slice().sort(function(a,b){
+    return a.date === b.date ? b.id.localeCompare(a.id) : b.date.localeCompare(a.date);
+  }).slice(0,25);
+
+  h += '<section class="card list"><div class="label" style="padding-top:14px;margin-bottom:0">Recent trades</div>';
+  recent.forEach(function(t){
+    var d = fromISO(t.date);
+    h += '<div class="row"><div class="grow">' +
+         '<div class="t truncate">' + esc(t.symbol || "Trade") + ' &middot; ' + MS[d.getMonth()] + ' ' + d.getDate() + '</div>' +
+         (t.note ? '<div class="s truncate">' + esc(t.note) + '</div>' : '') +
+         '</div><div style="display:flex;align-items:center;gap:12px">' +
+         '<span class="amt ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span>' +
+         '<button data-act="del" data-val="' + t.id + '" style="color:var(--sub);display:flex" aria-label="Delete trade">' + ICON.trash + '</button>' +
+         '</div></div>';
+  });
+  h += '</section>';
+  return h;
+}
+
+function sheetHTML(){
+  if (!S.day) return "";
+  var d = fromISO(S.day);
+  var list = mine().filter(function(t){ return t.date === S.day; });
+  var pnl = list.reduce(function(a,t){ return a + t.pnl; }, 0);
+
+  var h = '<div class="scrim" data-act="close"><div class="sheet" data-stop="1">' +
+    '<div class="grab"></div><div class="sheet-hd"><div>' +
+    '<div class="day">' + DOW[d.getDay()] + ', ' + MS[d.getMonth()] + ' ' + d.getDate() + '</div>' +
+    '<div class="tot ' + cls(pnl) + '">' + signed(pnl) + '</div></div>' +
+    '<button class="xbtn" data-act="close" aria-label="Close">' + ICON.x + '</button></div>';
+
+  if (!list.length){
+    h += '<section class="card empty" style="padding:26px"><p style="margin:0">No trades logged on this day.</p></section>';
+  } else {
+    h += '<section class="card list">';
+    list.forEach(function(t){
+      h += '<div class="row"><div class="grow">' +
+           '<div class="t truncate">' + esc(t.symbol || "Trade") + '</div>' +
+           (t.note ? '<div class="s truncate">' + esc(t.note) + '</div>' : '') +
+           '</div><div style="display:flex;align-items:center;gap:12px">' +
+           '<span class="amt ' + cls(t.pnl) + '">' + signed(t.pnl) + '</span>' +
+           '<button data-act="del" data-val="' + t.id + '" style="color:var(--sub);display:flex" aria-label="Delete trade">' + ICON.trash + '</button>' +
+           '</div></div>';
+    });
+    h += '</section>';
+  }
+  h += '<button class="primary" data-act="addFromDay">Add a trade</button></div></div>';
+  return h;
+}
+
+/* -------------------------------- rendering ------------------------------ */
+function render(){
+  var active = document.activeElement;
+  var keepId = active && active.id && active.tagName !== "BUTTON" ? active.id : null;
+  var caret = null;
+  if (keepId) { try { caret = active.selectionStart; } catch(e){} }
+
+  var c = cfg();
+  document.documentElement.style.setProperty("--accent", c.accent);
+  document.documentElement.style.setProperty("--accent-soft", c.soft);
+  document.getElementById("title").textContent =
+    S.tab === "add" ? "New trade" : S.tab === "stats" ? "Stats" : "Journal";
+  document.getElementById("acctLabel").textContent = c.title;
+
+  var segs = document.querySelectorAll('#acctSeg button');
+  for (var i = 0; i < segs.length; i++){
+    segs[i].classList.toggle("on", segs[i].getAttribute("data-val") === S.account);
+  }
+  document.getElementById("tabJournal").classList.toggle("on", S.tab === "journal");
+  document.getElementById("tabStats").classList.toggle("on", S.tab === "stats");
+
+  document.getElementById("main").innerHTML =
+    S.tab === "add" ? addView() : S.tab === "stats" ? statsView() : journalView();
+  document.getElementById("sheetHost").innerHTML = sheetHTML();
+
+  if (keepId){
+    var el = document.getElementById(keepId);
+    if (el){
+      el.focus();
+      if (caret != null && el.setSelectionRange){
+        try { el.setSelectionRange(caret, caret); } catch(e){}
+      }
+    }
+  }
+}
+
+/* --------------------------------- events -------------------------------- */
+function saveTrade(){
+  var f = S.form;
+  var num = parseFloat(f.value);
+  if (isNaN(num) || num <= 0) return;
+  var t = {
+    id: Date.now() + "-" + Math.random().toString(36).slice(2,7),
+    account: S.account,
+    date: f.date,
+    pnl: f.win ? num : -num,
+    symbol: f.symbol.trim(),
+    note: f.note.trim()
+  };
+  persist(S.trades.concat([t]));
+  var d = fromISO(t.date);
+  S.cursor = {y:d.getFullYear(), m:d.getMonth()};
+  S.form = {win:true, value:"", date:f.date, symbol:"", note:""};
+  S.tab = "journal";
+  render();
+  toast(signed(t.pnl) + " logged to " + ACCOUNTS[t.account].label.toLowerCase());
+}
+
+document.addEventListener("click", function(e){
+  var stop = e.target.closest("[data-stop]");
+  var el = e.target.closest("[data-act]");
+  if (!el) return;
+  var act = el.getAttribute("data-act");
+  var val = el.getAttribute("data-val");
+
+  if (act === "close" && stop && el.classList.contains("scrim")) return;
+
+  switch(act){
+    case "account": S.account = val; break;
+    case "tab": S.tab = val; S.day = null; break;
+    case "month":
+      var d = new Date(S.cursor.y, S.cursor.m + (+val), 1);
+      S.cursor = {y:d.getFullYear(), m:d.getMonth()};
+      break;
+    case "today":
+      var n = new Date();
+      S.cursor = {y:n.getFullYear(), m:n.getMonth()};
+      break;
+    case "day": S.day = val; break;
+    case "close": S.day = null; break;
+    case "addFromDay": S.form.date = S.day; S.day = null; S.tab = "add"; break;
+    case "win": S.form.win = val === "1"; break;
+    case "jump":
+      var p = val.split("-");
+      S.cursor = {y:+p[0], m:+p[1]-1};
+      S.tab = "journal";
+      break;
+    case "del":
+      persist(S.trades.filter(function(t){ return t.id !== val; }));
+      break;
+    case "save": saveTrade(); return;
+  }
+  render();
+});
+
+document.addEventListener("input", function(e){
+  var f = e.target.getAttribute && e.target.getAttribute("data-field");
+  if (!f) return;
+  if (f === "value"){
+    var clean = e.target.value.replace(/[^0-9.]/g, "").replace(/(\..*)\./g, "$1");
+    if (clean !== e.target.value) e.target.value = clean;
+    S.form.value = clean;
+    var btn = document.querySelector('[data-act="save"]');
+    if (btn) btn.disabled = !(parseFloat(clean) > 0);
+  } else if (f === "symbol"){
+    S.form.symbol = e.target.value.toUpperCase().slice(0,12);
+    if (e.target.value !== S.form.symbol) e.target.value = S.form.symbol;
+  } else {
+    S.form[f] = e.target.value;
+  }
+});
+
+render();
+})();
+</script>
+</body>
+</html>
